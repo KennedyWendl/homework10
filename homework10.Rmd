@@ -1,0 +1,62 @@
+---
+title: "homework10"
+author: "Kennedy Wendl"
+date: "2023-04-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# GitHub Repo: https://github.com/KennedyWendl/homework10
+
+```{r}
+accidents = read.csv("C:\\Users\\Keith Wendl\\Downloads\\accident.csv")
+person = read.csv("C:\\Users\\Keith Wendl\\Downloads\\person.csv")
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Finding the variable names 
+names(accidents)
+
+# Part One 
+
+# Question 1 
+# Based on the group_by() and count() functions, the most popular days of the week for accidents are Saturday, Friday, and Sunday.
+dayGroup = accidents %>% group_by(DAY_WEEK) %>% count() 
+
+# Question 2
+# Similar to Question 1, I used the group_by and count() functions to determine the most popular times which are at 6PM, 8PM, and 5PM. 
+hourGroup = accidents %>% group_by(HOUR) %>% count() 
+
+# Question 3
+# I used the filter() function to find there were 8,720 accidents with at least one drunk driver 
+drunkDriver = filter(accidents, DRUNK_DR > 0) 
+
+# Part Two 
+
+# Question 1
+person = person %>% filter(PER_TYP == 1)
+
+# Question 2
+accidentsAndPerson = left_join(person, accidents, by = c("ST_CASE", "HOUR", "MINUTE", "DAY", "MONTH"))
+
+# Question 3
+accidentsAndPerson = accidentsAndPerson %>% group_by(DAY_WEEK, HOUR, SEX) %>% summarise(numAcc = n())
+
+accidentsAndPerson = accidentsAndPerson %>% filter(HOUR < 24)
+
+# Visualization for DAY_WEEK
+ggplot(accidentsAndPerson, aes(x = DAY_WEEK)) + geom_bar()
+
+# Visualization for HOUR
+ggplot(accidentsAndPerson, aes(x = HOUR)) + geom_bar()
+
+# Visualization for SEX
+ggplot(accidentsAndPerson, aes(x = SEX)) + geom_bar()
+
+``` 
